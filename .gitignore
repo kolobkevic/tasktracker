@@ -10,3 +10,6 @@
 /tasktracker-front/mvnw.cmd
 
 **.iml
+
+/tasktracker-front/target/**
+/tasktracker-backend/target/**

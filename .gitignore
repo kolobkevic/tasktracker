@@ -1,0 +1,12 @@
+/.idea/**
+/tasktracker-backend/.idea/**
+/tasktracker-front/.idea/**
+
+/tasktracker-backend/.mvn/**
+/tasktracker-backend/mvnw
+/tasktracker-backend/mvnw.cmd
+/tasktracker-front/.mvn/**
+/tasktracker-front/mvnw
+/tasktracker-front/mvnw.cmd
+
+**.iml

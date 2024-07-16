@@ -1,0 +1,45 @@
+services:
+  db:
+    image: mysql:8.1.0
+    container_name: db
+    restart: unless-stopped
+    networks:
+      - tt-network
+    ports:
+      - "3306:3306"
+    env_file:
+      - tasktracker-backend/app.env
+
+  redis:
+    image: redis:7.4-rc
+    networks:
+      - tt-network
+    ports:
+      - '6379:6379'
+
+  kafka:
+    image: bitnami/kafka:3.3.2
+    networks:
+      - tt-network
+    env_file:
+      - tasktracker-backend/app.env
+
+  app:
+    build: ./tasktracker-backend
+    networks:
+      - tt-network
+    ports:
+      - "8080:8080"
+    env_file:
+      - tasktracker-backend/app.env
+    depends_on:
+      - db
+      - redis
+      - kafka
+
+networks:
+  tt-network:
+    driver: bridge
+
+volumes:
+  db_data:

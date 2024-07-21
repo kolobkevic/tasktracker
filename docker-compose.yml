@@ -37,6 +37,13 @@ services:
       - redis
       - kafka
 
+  front:
+    build: ./tasktracker-front
+    networks:
+      - tt-network
+    ports:
+      - "8088:8088"
+
 networks:
   tt-network:
     driver: bridge

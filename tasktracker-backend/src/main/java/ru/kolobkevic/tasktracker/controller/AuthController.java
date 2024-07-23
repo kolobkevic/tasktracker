@@ -2,7 +2,10 @@ package ru.kolobkevic.tasktracker.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,8 +38,15 @@ public class AuthController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
-        JwtAuthenticationResponse response = authService.signIn(request);
-        log.info(response.getToken());
+        JwtAuthenticationResponse response;
+        try {
+            response = authService.signIn(request);
+            log.info(response.getToken());
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (AuthenticationException e) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(response);
     }
 }

@@ -28,7 +28,10 @@
         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                 data-bs-target="#modalSignUp">Sign up
         </button>
-        <button type="button" class="btn btn-outline-primary me-2">Sign out</button>
+        <button type="button" class="btn btn-outline-primary me-2" id="signOutButton">Sign out</button>
+        <div aria-hidden="true">
+            <a id="username"></a>
+        </div>
     </div>
 
 </header>
@@ -46,7 +49,7 @@
                     <form id="signUpForm">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control rounded-3" name="username" id="signUpModalUsername"
-                                   placeholder="name@example.com">
+                                   placeholder="name@example.com" autocomplete="username">
                             <label for="signUpModalUsername"> Username</label>
                         </div>
                         <div class="form-floating mb-3">
@@ -66,11 +69,13 @@
                         </div>
                         <div class="form-floating mb-3">
                             <input type="password" class="form-control rounded-3" name="password"
-                                   id="signUpModalPassword"
-                                   placeholder="Password">
+                                   id="signUpModalPassword" placeholder="Password" autocomplete="new-password">
                             <label for="signUpModalPassword">Password</label>
                         </div>
                         <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Sign up</button>
+                        <div class="form-floating mb-3">
+                            <p class="text-center" id="signUpError"></p>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -87,18 +92,21 @@
                 </div>
 
                 <div class="modal-body p-5 pt-0">
-                    <form class="">
+                    <form id="signInForm">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control rounded-3" id="signInModalUsername"
-                                   placeholder="name@example.com">
+                            <input type="text" class="form-control rounded-3" id="signInModalUsername" name="username"
+                                   placeholder="name@example.com" autocomplete="username">
                             <label for="signInModalUsername">Username</label>
                         </div>
                         <div class="form-floating mb-3">
                             <input type="password" class="form-control rounded-3" id="signInModalPassword"
-                                   placeholder="Password">
+                                   name="password" placeholder="Password" autocomplete="current-password">
                             <label for="signInModalPassword">Password</label>
                         </div>
                         <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Sign in</button>
+                        <div class="form-floating mb-3">
+                            <p class="text-center" id="signInError"></p>
+                        </div>
                     </form>
                 </div>
             </div>

@@ -24,7 +24,6 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private static final String LOGOUT_URL = "/logout";
     private final UserDetailsService userService;
 
     @Bean
@@ -33,10 +32,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/registration").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated())
-                .logout(logout -> logout
-                        .logoutUrl(LOGOUT_URL));
+                .authenticationProvider(daoAuthenticationProvider())
+                .authenticationManager(authenticationManager());
         return http.build();
     }
     

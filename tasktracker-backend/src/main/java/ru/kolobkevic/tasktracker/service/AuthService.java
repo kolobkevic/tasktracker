@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kolobkevic.tasktracker.dto.JwtAuthenticationResponse;
@@ -34,12 +33,8 @@ public class AuthService {
     }
 
     public JwtAuthenticationResponse signIn(SignInRequest request) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        } catch (AuthenticationException e) {
-            log.error(e.getMessage(), e);
-        }
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         User user = userService.getUserByUsername(request.getUsername());
         return new JwtAuthenticationResponse(jwtService.generateToken(user));
     }

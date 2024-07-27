@@ -1,6 +1,7 @@
 package ru.kolobkevic.tasktracker.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -43,24 +44,21 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secretBytes);
     }
 
-    public Claims getAllClaims(String token) {
+    private Claims getAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSignKey())
                 .build()
                 .parseSignedClaims(token).getPayload();
     }
 
-    private <T> T getClaim(String token, Function<Claims, T> claimsResolver) {
+    public <T> T getClaim(String token, Function<Claims, T> claimsResolver)
+            throws JwtException, IllegalArgumentException {
         Claims claims = getAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
     public boolean isTokenValid(String token, User user) {
         String username = getClaim(token, Claims::getSubject);
-        return user.getUsername().equals(username) && !isTokenExpired(token);
-    }
-
-    private boolean isTokenExpired(String token) {
-        return getClaim(token, Claims::getExpiration).before(new Date());
+        return user.getUsername().equals(username);
     }
 }

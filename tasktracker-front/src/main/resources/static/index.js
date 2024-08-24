@@ -202,6 +202,7 @@ function deleteTask(event) {
         headers: {Authorization: bearerHeader + JSON.parse(localStorage.webUser).token}
     })
         .done(function (response) {
+            deleteForm.reset()
             showTasks()
             $('#deleteModal').modal('hide');
         })
@@ -225,6 +226,7 @@ function editTask(event) {
         headers: {Authorization: bearerHeader + JSON.parse(localStorage.webUser).token}
     })
         .done(function (response) {
+            editForm.reset()
             showTasks()
             $('#editModal').modal('hide');
         })
@@ -248,6 +250,7 @@ function createTask(event) {
         headers: {Authorization: bearerHeader + JSON.parse(localStorage.webUser).token}
     })
         .done(function (response) {
+            createForm.reset()
             showTasks()
             $('#createModal').modal('hide');
         })

@@ -26,9 +26,9 @@
                 data-bs-target="#modalSignIn" id="signInButton">Login
         </button>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                data-bs-target="#modalSignUp">Sign up
+                data-bs-target="#modalSignUp" id="signUpButton">Sign up
         </button>
-        <button type="button" class="btn btn-outline-primary me-2" id="signOutButton">Sign out</button>
+        <button type="button" class="btn btn-outline-primary me-2" id="signOutButton" hidden="">Sign out</button>
         <div aria-hidden="true">
             <a id="username"></a>
         </div>
@@ -120,70 +120,143 @@
         <div class="col-md-4 themed-grid-col container themed-container text-center">
             <h4>In work</h4>
             <div class="container themed-container text-center" id="inWorkTasksContainer">
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">Task name</h5>
-                        <h6 class="card-subtitle mb-2 text-body-secondary">Task subtitle</h6>
-                        <p class="card-text">In work task 1</p>
-                        <a href="#" class="card-link">Done</a>
-                        <a href="#" class="card-link">Delete</a>
-                    </div>
-                </div>
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">Task name</h5>
-                        <h6 class="card-subtitle mb-2 text-body-secondary">Task subtitle</h6>
-                        <p class="card-text">In work task 2</p>
-                        <a href="#" class="card-link">Done</a>
-                        <a href="#" class="card-link">Delete</a>
-                    </div>
-                </div>
             </div>
         </div>
 
-        <div class="col-md-4 themed-grid-col ">
+        <div class="col-md-4 themed-grid-col">
             <h4>Done</h4>
-            <div id="doneTasksContainer">
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">Done task name</h5>
-                        <h6 class="card-subtitle mb-2 text-body-secondary">Task subtitle</h6>
-                        <p class="card-text">Done task 1</p>
-                        <a href="#" class="card-link">Delete</a>
-                    </div>
-                </div>
+            <div class="container themed-container text-center" id="doneTasksContainer">
             </div>
         </div>
         <div class="col-md-4 themed-grid-col">
-            <h4>New task</h4>
-            <div id="newTasksContainer">
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">New task</h5>
-                        <h6 class="card-subtitle mb-2 text-body-secondary">Task subtitle</h6>
-                        <p class="card-text">New task</p>
-                        <a href="#" class="card-link">Create</a>
-                    </div>
+            <button type="button" class="btn btn-primary" id="createButton" hidden
+                    data-bs-toggle="modal" data-bs-target="#createModal">New task
+            </button>
+        </div>
+    </div>
+
+    <!--CREATE MODAL-->
+    <div class="modal" aria-hidden="true" tabindex="-1" role="dialog" id="createModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header p-5 pb-4 border-bottom-0">
+                    <h1 class="fw-bold mb-0 fs-2">New task</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-5 pt-0">
+                    <form id="createForm">
+                        <div class="form-floating mb-3">
+                            <input id="createModalHead" type="text" class="form-control rounded-3" name="head">
+                            <label for="createModalHead"></label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <textarea id="createModalContent" name="content"
+                                      class="border-0 w-100 rounded-2 p-2"
+                                      rows="3" style="outline: none; resize: vertical; overflow: hidden">
+
+                            </textarea>
+                            <label for="createModalContent"></label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input id="createModalStatus" type="text" class="form-control rounded-3" name="status">
+                            <label for="createModalStatus"></label>
+                        </div>
+                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--EDIT MODAL-->
+    <div class="modal" aria-hidden="true" tabindex="-1" role="dialog" id="editModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header p-5 pb-4 border-bottom-0">
+                    <h1 class="fw-bold mb-0 fs-2">Edit</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-5 pt-0">
+                    <form id="editForm">
+                        <div class="taskId">
+                            <input type="hidden" name="id" readonly>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input id="editModalHead" type="text" class="form-control rounded-3" name="head">
+                            <label for="editModalHead"></label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <textarea id="editModalContent" name="content"
+                                      class="border-0 w-100 rounded-2 p-2"
+                                      rows="3" style="outline: none; resize: vertical; overflow: hidden">
+
+                            </textarea>
+                            <label for="editModalContent"></label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input id="editModalStatus" type="text" class="form-control rounded-3" name="status">
+                            <label for="editModalStatus"></label>
+                        </div>
+                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!--DELETE MODAL-->
+    <div class="modal fade" aria-hidden="true" tabindex="-1" role="dialog" id="deleteModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header p-5 pb-4 border-bottom-0">
+                    <h1 class="fw-bold mb-0 fs-2">Delete</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-5 pt-0">
+                    <form id="deleteForm">
+                        <div class="taskId">
+                            <input type="hidden" name="id" readonly>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input id="deleteModalHead" type="text" class="form-control rounded-3" name="head"
+                                   readonly>
+                            <label for="deleteModalHead"></label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <textarea id="deleteModalContent" name="content"
+                                      class="border-0 w-100 rounded-2 p-2"
+                                      rows="3" style="outline: none; resize: vertical; overflow: hidden"
+                                      readonly></textarea>
+                            <label for="deleteModalContent"></label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input id="deleteModalStatus" type="text" class="form-control rounded-3" name="status"
+                                   readonly>
+                            <label for="deleteModalStatus"></label>
+                        </div>
+                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Delete</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <!--FOOTER-->
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="mb-3 mb-md-0 text-body-secondary">© 2024 Watermelon Company, Inc</span>
+        </div>
+    </footer>
+
+    <script src="index.js"></script>
 </div>
-
-
-<!--FOOTER-->
-<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-    <div class="col-md-4 d-flex align-items-center">
-        <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
-            <svg class="bi" width="30" height="24">
-                <use xlink:href="#bootstrap"></use>
-            </svg>
-        </a>
-        <span class="mb-3 mb-md-0 text-body-secondary">© 2024 Watermelon Company, Inc</span>
-    </div>
-</footer>
-
-<script src="index.js"></script>
-
 </body>
 </html>

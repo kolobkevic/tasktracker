@@ -3,6 +3,7 @@ package ru.kolobkevic.tasktracker.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import ru.kolobkevic.tasktracker.converter.TaskConverter;
 import ru.kolobkevic.tasktracker.dto.TaskRequest;
 import ru.kolobkevic.tasktracker.dto.TaskResponse;
 import ru.kolobkevic.tasktracker.model.Task;
@@ -19,6 +20,7 @@ import java.util.List;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final UserService userService;
+    private final TaskConverter taskConverter;
 
     public TaskResponse create(UserDetails userDetails, TaskRequest taskRequest) {
         Task task = new Task();
@@ -33,7 +35,7 @@ public class TaskService {
         task.setOwner(user);
         task.setCreatedAt(Date.from(Instant.now()));
 
-        return convertTaskToResponse(taskRepository.save(task));
+        return taskConverter.toResponse(taskRepository.save(task));
     }
 
     public TaskResponse update(TaskRequest taskRequest) {
@@ -42,7 +44,7 @@ public class TaskService {
         task.setHead(taskRequest.getHead());
         task.setStatus(taskRequest.getStatus());
 
-        return convertTaskToResponse(taskRepository.save(task));
+        return taskConverter.toResponse(taskRepository.save(task));
     }
 
     public void delete(Long id) {
@@ -55,24 +57,8 @@ public class TaskService {
         List<Task> tasks = new ArrayList<>();
         taskRepository.findAll().forEach(tasks::add);
         for (Task task : tasks) {
-            TaskResponse taskResponse = new TaskResponse();
-            taskResponse.setId(task.getId());
-            taskResponse.setHead(task.getHead());
-            taskResponse.setContent(task.getContent());
-            taskResponse.setStatus(task.getStatus());
-            taskResponse.setCreatedAt(task.getCreatedAt());
-            taskResponse.setDoneAt(task.getDoneAt());
-            taskResponses.add(taskResponse);
+            taskResponses.add(taskConverter.toResponse(task));
         }
         return taskResponses;
-    }
-
-    private TaskResponse convertTaskToResponse(Task task) {
-        TaskResponse taskResponse = new TaskResponse();
-        taskResponse.setId(task.getId());
-        taskResponse.setHead(task.getHead());
-        taskResponse.setContent(task.getContent());
-        taskResponse.setStatus(task.getStatus());
-        return taskResponse;
     }
 }

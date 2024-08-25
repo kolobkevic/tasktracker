@@ -31,6 +31,7 @@ createForm.addEventListener('submit', createTask)
 $(document).ready(function () {
     if (isUserLoggedIn()) {
         showTasks()
+        showAuthorizeElements()
     } else {
         showUnAuthorizeElements()
     }
@@ -277,6 +278,7 @@ function showAuthorizeElements() {
     signUpButton.hidden = true
     usernameElem.textContent = JSON.parse(localStorage.webUser).username
 }
+
 function showUnAuthorizeElements() {
     createButton.hidden = true
     signOutButton.hidden = true
@@ -287,7 +289,7 @@ function showUnAuthorizeElements() {
     usernameElem.textContent = ""
 }
 
-function convertDateToString(date){
+function convertDateToString(date) {
     const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
     const currentLocale = Intl.DateTimeFormat().resolvedOptions().locale
     const options = {

@@ -30,15 +30,15 @@ public class TaskService {
     @CacheEvict(value = "tasks", allEntries = true)
     public TaskResponse create(UserDetails userDetails, TaskRequest taskRequest) {
         Task task = new Task();
-        String head = taskRequest.getHead().isBlank()
+        String head = taskRequest.getTitle().isBlank()
                 ? "Untitled"
-                : taskRequest.getHead();
+                : taskRequest.getTitle();
         User user = userService.getUserByUsername(userDetails.getUsername());
 
-        task.setHead(head);
+        task.setTitle(head);
         task.setContent(taskRequest.getContent());
         task.setStatus(TaskStatus.valueOf(taskRequest.getStatus().toUpperCase()));
-        task.setOwner(user);
+        task.setUser(user);
         task.setCreatedAt(Date.from(Instant.now()));
 
         return taskConverter.toResponse(taskRepository.save(task));
@@ -48,7 +48,7 @@ public class TaskService {
     public TaskResponse update(TaskRequest taskRequest) {
         Task task = taskRepository.findById(taskRequest.getId()).orElseThrow();
         task.setContent(taskRequest.getContent());
-        task.setHead(taskRequest.getHead());
+        task.setTitle(taskRequest.getTitle());
         task.setStatus(TaskStatus.valueOf(taskRequest.getStatus().toUpperCase()));
 
         return taskConverter.toResponse(taskRepository.save(task));

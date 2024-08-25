@@ -141,12 +141,12 @@ function showTasks() {
 function createTaskCard(task) {
     const card = $('<div>').addClass('card');
 
-    const title = $('<div>').addClass('card_title').append($('<h5>').text(task.head));
+    const title = $('<div>').addClass('card_title').append($('<h5>').text(task.title));
     const content = $('<div>').addClass('card_content').append($('<p>').text(task.content));
     const status = $('<div>').addClass('card_status').append($('<p>').text(task.status));
 
     const created = $('<div>').addClass('card_created');
-    created.append($('<p>').addClass('card_created_head').text('created:'));
+    created.append($('<p>').addClass('card_created_title').text('created:'));
     created.append($('<p>').addClass('card_created_date').text(convertDateToString(task.createdAt)));
 
     const buttons = $('<div>').addClass('card_buttons');
@@ -172,18 +172,19 @@ function fillCardModal(event, btn) {
     btn = event.currentTarget.className;
 
     const id = $(event.target).closest(".card").find(".taskId").text();
-    const head = $(event.target).closest(".card").find(".card_title h5").text();
+    const title = $(event.target).closest(".card").find(".card_title h5").text();
     const content = $(event.target).closest(".card").find(".card_content p").text();
     const status = $(event.target).closest(".card").find(".card_status p").text();
 
     $(".taskId input").attr("value", id);
 
     if (btn.includes('edit')) {
-        $("#editModalHead").attr("value", head);
+        $("#editModalTitle").attr("value", title);
+        console.log("Title: " + title)
         $("#editModalContent").text(content);
         $("#editModalStatus").attr("value", status)
     } else if (btn.includes('delete')) {
-        $("#deleteModalHead").attr("value", head);
+        $("#deleteModalTitle").attr("value", title);
         $("#deleteModalContent").text(content);
         $("#deleteModalStatus").attr("value", status)
     }

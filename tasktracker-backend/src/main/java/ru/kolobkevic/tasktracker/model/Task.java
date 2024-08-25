@@ -30,16 +30,16 @@ public class Task {
 
     @Size(max = 255)
     @NotNull
-    @Column(name = "head", nullable = false)
-    private String head;
+    @Column(name = "title", nullable = false)
+    private String title;
 
     @NotNull
     @Column(name = "content", nullable = false)
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "owner")
-    private User owner;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)

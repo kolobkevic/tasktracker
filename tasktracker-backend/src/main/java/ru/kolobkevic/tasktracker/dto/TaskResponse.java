@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class TaskResponse {
     private Long id;
-    private String head;
+    private String title;
     private String content;
     private String status;
     private Date createdAt;

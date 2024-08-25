@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TaskRequest {
     private Long id;
-    private String head = "";
+    private String title = "";
     private String content = "";
     private String status = "";
 }

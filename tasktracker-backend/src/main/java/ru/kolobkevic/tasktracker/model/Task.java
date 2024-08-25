@@ -1,5 +1,7 @@
 package ru.kolobkevic.tasktracker.model;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Entity;
@@ -39,9 +41,9 @@ public class Task {
     @JoinColumn(name = "owner")
     private User owner;
 
-    @Size(max = 50)
-    @Column(name = "status", length = 50)
-    private String status;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")

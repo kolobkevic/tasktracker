@@ -1,6 +1,8 @@
 package ru.kolobkevic.tasktracker.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.kolobkevic.tasktracker.converter.TaskConverter;
@@ -17,6 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@EnableCaching
 public class TaskService {
     private final TaskRepository taskRepository;
     private final UserService userService;
@@ -52,6 +55,7 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
+    @Cacheable("tasks")
     public List<TaskResponse> findAll() {
         List<TaskResponse> taskResponses = new ArrayList<>();
         List<Task> tasks = new ArrayList<>();

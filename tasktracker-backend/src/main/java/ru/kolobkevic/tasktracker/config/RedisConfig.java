@@ -30,7 +30,6 @@ public class RedisConfig {
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(myDefaultCacheConfig())
-//                .withCacheConfiguration("tasks", myDefaultCacheConfig())
                 .build();
     }
 

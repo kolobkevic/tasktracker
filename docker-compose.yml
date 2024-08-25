@@ -11,6 +11,8 @@ services:
       - tasktracker-backend/app.env
 
   redis:
+    container_name: redis
+    hostname: redis
     image: redis:7.4-rc
     networks:
       - tt-network

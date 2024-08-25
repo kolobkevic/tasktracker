@@ -1,11 +1,16 @@
 package ru.kolobkevic.tasktracker.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import ru.kolobkevic.tasktracker.converter.TaskConverter;
 import ru.kolobkevic.tasktracker.dto.TaskRequest;
 import ru.kolobkevic.tasktracker.dto.TaskResponse;
 import ru.kolobkevic.tasktracker.model.Task;
+import ru.kolobkevic.tasktracker.model.TaskStatus;
 import ru.kolobkevic.tasktracker.model.User;
 import ru.kolobkevic.tasktracker.repository.TaskRepository;
 
@@ -16,63 +21,53 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@EnableCaching
 public class TaskService {
     private final TaskRepository taskRepository;
     private final UserService userService;
+    private final TaskConverter taskConverter;
 
+    @CacheEvict(value = "tasks", allEntries = true)
     public TaskResponse create(UserDetails userDetails, TaskRequest taskRequest) {
         Task task = new Task();
-        String head = taskRequest.getHead().isBlank()
+        String head = taskRequest.getTitle().isBlank()
                 ? "Untitled"
-                : taskRequest.getHead();
+                : taskRequest.getTitle();
         User user = userService.getUserByUsername(userDetails.getUsername());
 
-        task.setHead(head);
+        task.setTitle(head);
         task.setContent(taskRequest.getContent());
-        task.setStatus(taskRequest.getStatus());
-        task.setOwner(user);
+        task.setStatus(TaskStatus.valueOf(taskRequest.getStatus().toUpperCase()));
+        task.setUser(user);
         task.setCreatedAt(Date.from(Instant.now()));
 
-        return convertTaskToResponse(taskRepository.save(task));
+        return taskConverter.toResponse(taskRepository.save(task));
     }
 
+    @CacheEvict(value = "tasks", allEntries = true)
     public TaskResponse update(TaskRequest taskRequest) {
         Task task = taskRepository.findById(taskRequest.getId()).orElseThrow();
         task.setContent(taskRequest.getContent());
-        task.setHead(taskRequest.getHead());
-        task.setStatus(taskRequest.getStatus());
+        task.setTitle(taskRequest.getTitle());
+        task.setStatus(TaskStatus.valueOf(taskRequest.getStatus().toUpperCase()));
 
-        return convertTaskToResponse(taskRepository.save(task));
+        return taskConverter.toResponse(taskRepository.save(task));
     }
 
+    @CacheEvict(value = "tasks", allEntries = true)
     public void delete(Long id) {
         Task task = taskRepository.findById(id).orElseThrow();
         taskRepository.delete(task);
     }
 
+    @Cacheable("tasks")
     public List<TaskResponse> findAll() {
         List<TaskResponse> taskResponses = new ArrayList<>();
         List<Task> tasks = new ArrayList<>();
         taskRepository.findAll().forEach(tasks::add);
         for (Task task : tasks) {
-            TaskResponse taskResponse = new TaskResponse();
-            taskResponse.setId(task.getId());
-            taskResponse.setHead(task.getHead());
-            taskResponse.setContent(task.getContent());
-            taskResponse.setStatus(task.getStatus());
-            taskResponse.setCreatedAt(task.getCreatedAt());
-            taskResponse.setDoneAt(task.getDoneAt());
-            taskResponses.add(taskResponse);
+            taskResponses.add(taskConverter.toResponse(task));
         }
         return taskResponses;
-    }
-
-    private TaskResponse convertTaskToResponse(Task task) {
-        TaskResponse taskResponse = new TaskResponse();
-        taskResponse.setId(task.getId());
-        taskResponse.setHead(task.getHead());
-        taskResponse.setContent(task.getContent());
-        taskResponse.setStatus(task.getStatus());
-        return taskResponse;
     }
 }

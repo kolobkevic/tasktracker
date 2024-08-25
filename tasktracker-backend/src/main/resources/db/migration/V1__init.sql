@@ -10,11 +10,11 @@ CREATE TABLE user
 CREATE TABLE task
 (
     id         INT AUTO_INCREMENT PRIMARY KEY,
-    head       VARCHAR(255) NOT NULL UNIQUE,
+    title       VARCHAR(255) NOT NULL,
     content    TEXT         NOT NULL,
-    owner      INT,
+    user_id    INT,
     status     VARCHAR(50),
     created_at TIMESTAMP DEFAULT NOW(),
-    done_at    TIMESTAMP    NULL,
+    done_at    TIMESTAMP NULL,
     FOREIGN KEY (owner) REFERENCES user (id)
 );

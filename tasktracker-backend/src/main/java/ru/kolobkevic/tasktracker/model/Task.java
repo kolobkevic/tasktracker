@@ -1,5 +1,7 @@
 package ru.kolobkevic.tasktracker.model;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Entity;
@@ -28,20 +30,20 @@ public class Task {
 
     @Size(max = 255)
     @NotNull
-    @Column(name = "head", nullable = false)
-    private String head;
+    @Column(name = "title", nullable = false)
+    private String title;
 
     @NotNull
     @Column(name = "content", nullable = false)
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "owner")
-    private User owner;
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Size(max = 50)
-    @Column(name = "status", length = 50)
-    private String status;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")

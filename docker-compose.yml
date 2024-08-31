@@ -21,6 +21,11 @@ services:
 
   kafka:
     image: bitnami/kafka:3.3.2
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - '29092:29092'
+      - '9092:9092'
     networks:
       - tt-network
     env_file:
@@ -31,12 +36,23 @@ services:
     networks:
       - tt-network
     ports:
-      - "8080:8080"
+      - '8080:8080'
     env_file:
       - tasktracker-backend/app.env
     depends_on:
       - db
       - redis
+      - kafka
+
+  email_sender:
+    build: ./tasktracker-email-sender
+    networks:
+      - tt-network
+    ports:
+      - '8070:8070'
+    env_file:
+      - tasktracker-backend/app.env
+    depends_on:
       - kafka
 
   front:

@@ -31,6 +31,7 @@
     <modules>
         <module>tasktracker-backend</module>
         <module>tasktracker-front</module>
+        <module>tasktracker-email-sender</module>
     </modules>
 
 </project>

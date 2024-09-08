@@ -1,0 +1,11 @@
+spring:
+  kafka:
+    bootstrap-servers: kafka:9092
+
+  datasource:
+    url: jdbc:mysql://db:3306/tasktracker_db
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+tasksLimitForReport: 5

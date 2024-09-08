@@ -9,7 +9,7 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import ru.kolobkevic.tasktracker.dto.UserTopicDto;
+import ru.kolobkevic.tasktracker.dto.EmailSendingDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ public class KafkaProducerConfig {
     private String bootstrapServers;
 
     @Bean
-    ProducerFactory<String, UserTopicDto> userProducerFactory() {
+    ProducerFactory<String, EmailSendingDto> producerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -29,7 +29,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    KafkaTemplate<String, UserTopicDto> objectKafkaTemplate() {
-        return new KafkaTemplate<>(userProducerFactory());
+    KafkaTemplate<String, EmailSendingDto> objectKafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
     }
 }

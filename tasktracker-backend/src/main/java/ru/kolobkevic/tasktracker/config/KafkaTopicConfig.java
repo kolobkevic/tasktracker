@@ -7,11 +7,11 @@ import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
 public class KafkaTopicConfig {
-    public static final String USER_TOPIC = "user-topic";
+    public static final String EMAIL_SENDING_TASKS = "EMAIL_SENDING_TASKS";
 
     @Bean
     public NewTopic createTopic() {
-        return TopicBuilder.name(USER_TOPIC)
+        return TopicBuilder.name(EMAIL_SENDING_TASKS)
                 .build();
     }
 }

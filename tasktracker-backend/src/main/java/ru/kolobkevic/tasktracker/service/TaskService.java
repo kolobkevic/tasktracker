@@ -40,6 +40,9 @@ public class TaskService {
         task.setStatus(TaskStatus.valueOf(taskRequest.getStatus().toUpperCase()));
         task.setUser(user);
         task.setCreatedAt(Date.from(Instant.now()));
+        if (taskRequest.getStatus().toUpperCase().equals(TaskStatus.DONE.toString())) {
+            task.setDoneAt(Date.from(Instant.now()));
+        }
 
         return taskConverter.toResponse(taskRepository.save(task));
     }
@@ -49,6 +52,14 @@ public class TaskService {
         Task task = taskRepository.findById(taskRequest.getId()).orElseThrow();
         task.setContent(taskRequest.getContent());
         task.setTitle(taskRequest.getTitle());
+
+        if (taskRequest.getStatus().toUpperCase().equals(TaskStatus.DONE.toString()) &&
+                (task.getStatus() == TaskStatus.IN_WORK)) {
+            task.setDoneAt(Date.from(Instant.now()));
+        } else if (taskRequest.getStatus().toUpperCase().equals(TaskStatus.IN_WORK.toString()) &&
+                task.getStatus().equals(TaskStatus.DONE)) {
+            task.setDoneAt(null);
+        }
         task.setStatus(TaskStatus.valueOf(taskRequest.getStatus().toUpperCase()));
 
         return taskConverter.toResponse(taskRepository.save(task));

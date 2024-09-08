@@ -62,6 +62,18 @@ services:
     ports:
       - "8088:8088"
 
+  scheduler:
+    build: ./tasktracker-scheduler
+    networks:
+      - tt-network
+    ports:
+      - '8060:8060'
+    env_file:
+      - tasktracker-backend/app.env
+    depends_on:
+      - kafka
+      - db
+
 networks:
   tt-network:
     driver: bridge

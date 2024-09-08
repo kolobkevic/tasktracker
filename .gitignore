@@ -2,6 +2,7 @@
 /tasktracker-backend/.idea/**
 /tasktracker-front/.idea/**
 /tasktracker-email-sender/.idea/**
+/tasktracker-scheduler/.idea/**
 
 /tasktracker-backend/.mvn/**
 /tasktracker-backend/mvnw
@@ -12,9 +13,13 @@
 /tasktracker-email-sender/.mvn/**
 /tasktracker-email-sender/mvnw
 /tasktracker-email-sender/mvnw.cmd
+/tasktracker-scheduler/.mvn/**
+/tasktracker-scheduler/mvnw
+/tasktracker-scheduler/mvnw.cmd
 
 **.iml
 
 /tasktracker-front/target/**
 /tasktracker-backend/target/**
 /tasktracker-email-sender/target/**
+/tasktracker-scheduler/target/**

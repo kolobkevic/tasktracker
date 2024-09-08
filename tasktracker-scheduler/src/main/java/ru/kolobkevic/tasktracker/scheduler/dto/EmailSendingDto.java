@@ -1,4 +1,4 @@
-package ru.kolobkevic.tasktracker.dto;
+package ru.kolobkevic.tasktracker.scheduler.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserTopicDto {
-    private String username;
+public class EmailSendingDto {
     private String email;
-    private String firstname;
-    private String lastname;
+    private String title;
+    private String content;
 }

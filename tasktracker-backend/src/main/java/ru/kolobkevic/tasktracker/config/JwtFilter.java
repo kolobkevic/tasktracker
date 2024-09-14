@@ -62,6 +62,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token");
+            SecurityContextHolder.clearContext();
         } catch (JwtException e) {
             log.error("Invalid JWT token");
         } finally {

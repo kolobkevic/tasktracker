@@ -1,11 +1,9 @@
 package ru.kolobkevic.tasktracker.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ru.kolobkevic.tasktracker.dto.JwtAuthenticationResponse;
 import ru.kolobkevic.tasktracker.dto.SignInRequest;
 import ru.kolobkevic.tasktracker.dto.SignUpRequest;
+import ru.kolobkevic.tasktracker.exception.InvalidArgumentsException;
 import ru.kolobkevic.tasktracker.service.AuthService;
 
 @Slf4j
@@ -24,9 +23,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/registration")
-    public ResponseEntity<?> register(@RequestBody SignUpRequest request, BindingResult bindingResult) {
+    public ResponseEntity<JwtAuthenticationResponse> register(@RequestBody @Valid SignUpRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().build();
+            throw new InvalidArgumentsException(getAllErrorMessages(bindingResult));
         }
         JwtAuthenticationResponse response = authService.signUp(request);
         log.info(response.getToken());
@@ -34,19 +33,21 @@ public class AuthController {
     }
 
     @PostMapping("/authentication")
-    public ResponseEntity<?> authenticate(@RequestBody SignInRequest request, BindingResult bindingResult) {
+    public ResponseEntity<JwtAuthenticationResponse> authenticate(@RequestBody @Valid SignInRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().build();
+            throw new InvalidArgumentsException(getAllErrorMessages(bindingResult));
         }
         JwtAuthenticationResponse response;
-        try {
-            response = authService.signIn(request);
-            log.info(response.getToken());
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } catch (AuthenticationException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        response = authService.signIn(request);
+        log.info(response.getToken());
         return ResponseEntity.ok(response);
+    }
+
+    private String getAllErrorMessages(BindingResult bindingResult) {
+        StringBuilder result = new StringBuilder();
+        bindingResult.getAllErrors().forEach(error -> result.append(
+                error.getDefaultMessage()).append(System.lineSeparator()));
+        result.delete(result.length() - 1, result.length());
+        return result.toString();
     }
 }

@@ -5,13 +5,12 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.kolobkevic.tasktracker.converter.TaskConverter;
 import ru.kolobkevic.tasktracker.dto.TaskRequest;
 import ru.kolobkevic.tasktracker.dto.TaskResponse;
-import ru.kolobkevic.tasktracker.exception.TaskNotFoundException;
 import ru.kolobkevic.tasktracker.exception.ObjectAlreadyExistsException;
+import ru.kolobkevic.tasktracker.exception.TaskNotFoundException;
 import ru.kolobkevic.tasktracker.model.Task;
 import ru.kolobkevic.tasktracker.model.TaskStatus;
 import ru.kolobkevic.tasktracker.model.User;
@@ -31,13 +30,13 @@ public class TaskService {
     private final TaskConverter taskConverter;
 
     @CacheEvict(value = "tasks", allEntries = true)
-    public TaskResponse create(UserDetails userDetails, TaskRequest taskRequest) {
+    public TaskResponse create(String username, TaskRequest taskRequest) {
         try {
             Task task = new Task();
             String head = taskRequest.getTitle().isBlank()
                     ? "Untitled"
                     : taskRequest.getTitle();
-            User user = userService.getUserByUsername(userDetails.getUsername());
+            User user = userService.getUserByUsername(username);
 
             task.setTitle(head);
             task.setContent(taskRequest.getContent());
@@ -58,9 +57,10 @@ public class TaskService {
     }
 
     @CacheEvict(value = "tasks", allEntries = true)
-    public TaskResponse update(TaskRequest taskRequest) {
+    public TaskResponse update(String username, TaskRequest taskRequest) {
         try {
-            Task task = taskRepository.findById(taskRequest.getId()).orElseThrow(TaskNotFoundException::new);
+            Task task = taskRepository.findByIdAndUser(taskRequest.getId(), userService.getUserByUsername(username))
+                    .orElseThrow(TaskNotFoundException::new);
             task.setContent(taskRequest.getContent());
             task.setTitle(taskRequest.getTitle());
 
@@ -83,16 +83,16 @@ public class TaskService {
     }
 
     @CacheEvict(value = "tasks", allEntries = true)
-    public void delete(Long id) {
-        Task task = taskRepository.findById(id).orElseThrow(TaskNotFoundException::new);
+    public void delete(String username, Long id) {
+        Task task = taskRepository.findByIdAndUser(id, userService.getUserByUsername(username))
+                .orElseThrow(TaskNotFoundException::new);
         taskRepository.delete(task);
     }
 
     @Cacheable("tasks")
-    public List<TaskResponse> findAll() {
+    public List<TaskResponse> findAll(String username) {
         List<TaskResponse> taskResponses = new ArrayList<>();
-        List<Task> tasks = new ArrayList<>();
-        taskRepository.findAll().forEach(tasks::add);
+        List<Task> tasks = new ArrayList<>(taskRepository.findAllByUser(userService.getUserByUsername(username)));
         for (Task task : tasks) {
             taskResponses.add(taskConverter.toResponse(task));
         }

@@ -30,8 +30,8 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<List<TaskResponse>> getAll() {
-        List<TaskResponse> allTasks = taskService.findAll();
+    public ResponseEntity<List<TaskResponse>> getAll(@AuthenticationPrincipal UserDetails userDetails) {
+        List<TaskResponse> allTasks = taskService.findAll(userDetails.getUsername());
         return ResponseEntity.ok(allTasks);
     }
 
@@ -41,22 +41,24 @@ public class TaskController {
         if (bindingResult.hasErrors()) {
             throw new InvalidArgumentsException(getAllErrorMessages(bindingResult));
         }
-        TaskResponse response = taskService.create(userDetails, taskRequest);
+        TaskResponse response = taskService.create(userDetails.getUsername(), taskRequest);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/edit")
-    public ResponseEntity<TaskResponse> edit(@RequestBody @Valid TaskRequest taskRequest, BindingResult bindingResult) {
+    public ResponseEntity<TaskResponse> edit(@AuthenticationPrincipal UserDetails userDetails,
+                                             @RequestBody @Valid TaskRequest taskRequest,
+                                             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new InvalidArgumentsException(getAllErrorMessages(bindingResult));
         }
-        TaskResponse response = taskService.update(taskRequest);
+        TaskResponse response = taskService.update(userDetails.getUsername(), taskRequest);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        taskService.delete(id);
+    public ResponseEntity<?> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) {
+        taskService.delete(userDetails.getUsername(), id);
         return ResponseEntity.noContent().build();
     }
 

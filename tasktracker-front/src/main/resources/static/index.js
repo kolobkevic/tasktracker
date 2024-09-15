@@ -122,10 +122,15 @@ function showTasks() {
             let tasks = response
             console.log(response)
 
-            const taskContainer = $("#inWorkTasksContainer").empty()
+            const inWorkTaskContainer = $("#inWorkTasksContainer").empty()
+            const doneTaskContainer = $("#doneTasksContainer").empty()
             $.each(tasks, function (i, task) {
                 const card = createTaskCard(task)
-                taskContainer.append(card)
+                if (task.status === "DONE") {
+                    doneTaskContainer.append(card)
+                } else {
+                    inWorkTaskContainer.append(card)
+                }
             })
 
             deleteButton = document.getElementsByClassName('btn btn-link delete-button')

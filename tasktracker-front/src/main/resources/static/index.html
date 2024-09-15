@@ -157,10 +157,12 @@
                             </textarea>
                             <label for="createModalContent"></label>
                         </div>
-                        <div class="form-floating mb-3">
-                            <input id="createModalStatus" type="text" class="form-control rounded-3" name="status">
-                            <label for="createModalStatus"></label>
-                        </div>
+
+                        <select class="form-select" aria-label="Task status" id="createModalStatus" name="status">
+                            <option selected ></option>
+                            <option value="IN_WORK">IN_WORK</option>
+                            <option value="DONE">DONE</option>
+                        </select>
                         <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Submit</button>
                         <div class="form-floating mb-3">
                             <p class="text-center" id="createTaskModalError"></p>
@@ -197,10 +199,11 @@
                             </textarea>
                             <label for="editModalContent"></label>
                         </div>
-                        <div class="form-floating mb-3">
-                            <input id="editModalStatus" type="text" class="form-control rounded-3" name="status">
-                            <label for="editModalStatus"></label>
-                        </div>
+                        <select class="form-select" aria-label="Task status" id="editModalStatus" name="status">
+                            <option selected ></option>
+                            <option value="IN_WORK">IN_WORK</option>
+                            <option value="DONE">DONE</option>
+                        </select>
                         <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Submit</button>
                         <div class="form-floating mb-3">
                             <p class="text-center" id="editTaskModalError"></p>
@@ -238,11 +241,11 @@
                                       readonly></textarea>
                             <label for="deleteModalContent"></label>
                         </div>
-                        <div class="form-floating mb-3">
-                            <input id="deleteModalStatus" type="text" class="form-control rounded-3" name="status"
-                                   readonly>
-                            <label for="deleteModalStatus"></label>
-                        </div>
+                        <select class="form-select" aria-label="Task status" id="deleteModalStatus" name="status">
+                            <option selected ></option>
+                            <option value="IN_WORK">IN_WORK</option>
+                            <option value="DONE">DONE</option>
+                        </select>
                         <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Delete</button>
                     </form>
                 </div>

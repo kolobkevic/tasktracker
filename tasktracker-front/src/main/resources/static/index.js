@@ -3,6 +3,10 @@ const registrationUrl = '/auth/registration';
 const authenticationUrl = '/auth/authentication';
 const tasksUrl = '/api/v1/tasks';
 const bearerHeader = 'Bearer '
+const TaskStatus = {
+    IN_WORK: 'IN_WORK',
+    DONE: 'DONE'
+};
 
 let signUpForm = document.getElementById('signUpForm');
 let signInForm = document.getElementById('signInForm');
@@ -189,11 +193,11 @@ function fillCardModal(event, btn) {
         $("#editModalTitle").attr("value", title);
         console.log("Title: " + title)
         $("#editModalContent").text(content);
-        $("#editModalStatus").attr("value", status)
+        document.getElementById('editModalStatus').value = status.toUpperCase()
     } else if (btn.includes('delete')) {
         $("#deleteModalTitle").attr("value", title);
         $("#deleteModalContent").text(content);
-        $("#deleteModalStatus").attr("value", status)
+        document.getElementById('deleteModalContent').value = status.toUpperCase()
     }
 }
 

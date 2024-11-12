@@ -39,7 +39,7 @@ public class TaskService {
         return taskRepository.findAllByDoneAtBetweenOrInWorkStatus(start, end);
     }
 
-    private Map<User, List<Task>> getAllUserTasks(Date start, Date end) {
+    Map<User, List<Task>> getAllUserTasks(Date start, Date end) {
         List<Task> tasks = getAllTasksByDoneAt(start, end);
         if (tasks.isEmpty()) {
             return new HashMap<>();
@@ -84,13 +84,13 @@ public class TaskService {
         return tasks.stream().filter(task -> task.getStatus().equals(TaskStatus.IN_WORK)).count();
     }
 
-    private long countFinishedTasksByDay(List<Task> tasks, Date date) {
+    long countFinishedTasksByDay(List<Task> tasks, Date date) {
         return tasks.stream().filter(
                 task -> task.getStatus().equals(TaskStatus.DONE) &&
                         task.getDoneAt().after(date) && task.getDoneAt().before(Date.from(Instant.now()))).count();
     }
 
-    private EmailSendingDto getEmailSendingDto(List<Task> tasks) {
+    EmailSendingDto getEmailSendingDto(List<Task> tasks) {
         long finishedTasks;
         long unFinishedTasks;
         StringBuilder title = new StringBuilder();

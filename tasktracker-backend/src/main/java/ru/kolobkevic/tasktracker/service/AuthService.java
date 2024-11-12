@@ -2,8 +2,10 @@ package ru.kolobkevic.tasktracker.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,8 @@ import ru.kolobkevic.tasktracker.dto.EmailSendingDto;
 import ru.kolobkevic.tasktracker.dto.JwtAuthenticationResponse;
 import ru.kolobkevic.tasktracker.dto.SignInRequest;
 import ru.kolobkevic.tasktracker.dto.SignUpRequest;
+import ru.kolobkevic.tasktracker.exception.ObjectAlreadyExistsException;
+import ru.kolobkevic.tasktracker.exception.UserBadCredentialsException;
 import ru.kolobkevic.tasktracker.model.User;
 
 import static ru.kolobkevic.tasktracker.config.KafkaTopicConfig.EMAIL_SENDING_TASKS;
@@ -33,16 +37,25 @@ public class AuthService {
         user.setFirstname(request.getFirstname());
         user.setLastname(request.getLastname());
 
-        userService.createUser(user);
+        try {
+            userService.createUser(user);
+        } catch (DataIntegrityViolationException e) {
+            if (e.getMessage().contains("Duplicate entry")) {
+                throw new ObjectAlreadyExistsException();
+            }
+        }
         sendKafkaMessage(user);
-        log.info("Created user username: {}, password: {}", user.getUsername(), user.getPassword());
 
         return new JwtAuthenticationResponse(jwtService.generateToken(user));
     }
 
     public JwtAuthenticationResponse signIn(SignInRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        } catch (BadCredentialsException e) {
+            throw new UserBadCredentialsException();
+        }
         User user = userService.getUserByUsername(request.getUsername());
         return new JwtAuthenticationResponse(jwtService.generateToken(user));
     }
@@ -53,6 +66,5 @@ public class AuthService {
                 "Successfully registered",
                 "Welcome " + user.getFirstname() + " " + user.getLastname() + "!");
         kafkaTemplate.send(EMAIL_SENDING_TASKS, emailSendingDto);
-        log.info("EmailSendingDto: {}", emailSendingDto);
     }
 }

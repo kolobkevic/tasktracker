@@ -13,8 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignUpRequest {
-    @Size(min = 5, max = 50, message = "Имя пользователя должно содержать от 5 до 50 символов")
-    @NotBlank(message = "Имя пользователя не может быть пустым")
+    @Size(min = 5, max = 50, message = "Логин пользователя должно содержать от 5 до 50 символов")
+    @NotBlank(message = "Логин пользователя не может быть пустым")
     private String username;
 
     @Size(max = 50, message = "Адрес электронной почты должен содержать до 50 символов")
@@ -30,7 +30,7 @@ public class SignUpRequest {
     @NotBlank(message = "Имя пользователя не может быть пустым")
     private String firstname;
 
-    @Size(min = 2, max = 50, message = "Имя пользователя должно содержать от 2 до 50 символов")
-    @NotBlank(message = "Имя пользователя не может быть пустым")
+    @Size(min = 2, max = 50, message = "Фамилия пользователя должно содержать от 2 до 50 символов")
+    @NotBlank(message = "Фамилия пользователя не может быть пустым")
     private String lastname;
 }

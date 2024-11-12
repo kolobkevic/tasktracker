@@ -3,11 +3,17 @@ const registrationUrl = '/auth/registration';
 const authenticationUrl = '/auth/authentication';
 const tasksUrl = '/api/v1/tasks';
 const bearerHeader = 'Bearer '
+const TaskStatus = {
+    IN_WORK: 'IN_WORK',
+    DONE: 'DONE'
+};
 
 let signUpForm = document.getElementById('signUpForm');
 let signInForm = document.getElementById('signInForm');
 let signUpError = document.getElementById('signUpError');
 let signInError = document.getElementById('signInError');
+let createTaskModalError = document.getElementById('createTaskModalError');
+let editTaskModalError = document.getElementById('editTaskModalError');
 let usernameElem = document.getElementById('username');
 let signOutButton = document.getElementById('signOutButton');
 let deleteForm = document.getElementById('deleteForm');
@@ -65,7 +71,8 @@ function submitForm(event, form) {
         .done(function (response) {
             localStorage.webUser = JSON.stringify({
                 username: parseJwt(response.token).username,
-                token: response.token
+                token: response.token,
+                expAt: parseJwt(response.token).exp
             })
 
             showTasks()
@@ -75,14 +82,8 @@ function submitForm(event, form) {
             $('#modalSignIn').modal('hide');
             $('#modalSignUp').modal('hide');
         })
-        .fail(function (jqXHR) {
-                if (jqXHR.status === 401) {
-                    error.textContent = "Wrong credentials";
-                } else if (jqXHR.status === 409) {
-                    error.textContent("User with such an email already exists")
-                } else {
-                    error.textContent("Something goes wrong, try again later")
-                }
+        .fail(function (errResponse) {
+                error.textContent = errResponse.responseJSON.message
             }
         )
 }
@@ -97,7 +98,7 @@ function parseJwt(token) {
 }
 
 function isUserLoggedIn() {
-    return !!localStorage.webUser;
+    return !!(localStorage.webUser && !isTokenExpired());
 }
 
 function logout(event) {
@@ -111,6 +112,11 @@ function logout(event) {
 }
 
 function showTasks() {
+    if (isTokenExpired()) {
+        console.log("Token is expired")
+        logout()
+        return
+    }
     $.ajax({
         url: hostApi + tasksUrl,
         type: "get",
@@ -120,10 +126,15 @@ function showTasks() {
             let tasks = response
             console.log(response)
 
-            const taskContainer = $("#inWorkTasksContainer").empty()
+            const inWorkTaskContainer = $("#inWorkTasksContainer").empty()
+            const doneTaskContainer = $("#doneTasksContainer").empty()
             $.each(tasks, function (i, task) {
                 const card = createTaskCard(task)
-                taskContainer.append(card)
+                if (task.status === "DONE") {
+                    doneTaskContainer.append(card)
+                } else {
+                    inWorkTaskContainer.append(card)
+                }
             })
 
             deleteButton = document.getElementsByClassName('btn btn-link delete-button')
@@ -182,11 +193,11 @@ function fillCardModal(event, btn) {
         $("#editModalTitle").attr("value", title);
         console.log("Title: " + title)
         $("#editModalContent").text(content);
-        $("#editModalStatus").attr("value", status)
+        document.getElementById('editModalStatus').value = status.toUpperCase()
     } else if (btn.includes('delete')) {
         $("#deleteModalTitle").attr("value", title);
         $("#deleteModalContent").text(content);
-        $("#deleteModalStatus").attr("value", status)
+        document.getElementById('deleteModalContent').value = status.toUpperCase()
     }
 }
 
@@ -195,6 +206,12 @@ function deleteTask(event) {
 
     let formData = new FormData(deleteForm)
     let id = formData.get('id')
+
+    if (isTokenExpired()) {
+        console.log("Token is expired")
+        logout()
+        return
+    }
 
     $.ajax({
         url: hostApi + tasksUrl + `/${id}`,
@@ -208,8 +225,8 @@ function deleteTask(event) {
             showTasks()
             $('#deleteModal').modal('hide');
         })
-        .fail(function () {
-                console.log("Something goes wrong")
+        .fail(function (errResponse) {
+                error.textContent = errResponse.responseJSON.message
             }
         )
 }
@@ -217,6 +234,12 @@ function deleteTask(event) {
 function editTask(event) {
     event.preventDefault()
     let json = getJsonFromForm(editForm)
+
+    if (isTokenExpired()) {
+        console.log("Token is expired")
+        logout()
+        return
+    }
 
     $.ajax({
         url: hostApi + tasksUrl + '/edit',
@@ -232,8 +255,8 @@ function editTask(event) {
             showTasks()
             $('#editModal').modal('hide');
         })
-        .fail(function () {
-                console.log("Something goes wrong")
+        .fail(function (errResponse) {
+                editTaskModalError.textContent = errResponse.responseJSON.message
             }
         )
 }
@@ -241,6 +264,12 @@ function editTask(event) {
 function createTask(event) {
     event.preventDefault()
     let json = getJsonFromForm(createForm)
+
+    if (isTokenExpired()) {
+        console.log("Token is expired")
+        logout()
+        return
+    }
 
     $.ajax({
         url: hostApi + tasksUrl + '/create',
@@ -256,8 +285,8 @@ function createTask(event) {
             showTasks()
             $('#createModal').modal('hide');
         })
-        .fail(function () {
-                console.log("Something goes wrong")
+        .fail(function (errResponse) {
+                createTaskModalError.textContent = errResponse.responseJSON.message
             }
         )
 }
@@ -304,4 +333,9 @@ function convertDateToString(date) {
     };
 
     return Intl.DateTimeFormat(currentLocale, options).format(new Date(date))
+}
+
+function isTokenExpired() {
+    let expiredAt = JSON.parse(localStorage.webUser).expAt
+    return expiredAt < (Date.now() / 1000).toFixed();
 }

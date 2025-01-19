@@ -38,7 +38,7 @@ public class AuthService {
         user.setLastname(request.getLastname());
 
         try {
-            userService.createUser(user);
+            user = userService.createUser(user);
         } catch (DataIntegrityViolationException e) {
             if (e.getMessage().contains("Duplicate entry")) {
                 throw new ObjectAlreadyExistsException();

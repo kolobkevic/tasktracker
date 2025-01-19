@@ -39,7 +39,7 @@ public class TaskService {
         return taskRepository.findAllByDoneAtBetweenOrInWorkStatus(start, end);
     }
 
-    private Map<User, List<Task>> getAllUserTasks(Date start, Date end) {
+    Map<User, List<Task>> getAllUserTasks(Date start, Date end) {
         List<Task> tasks = getAllTasksByDoneAt(start, end);
         if (tasks.isEmpty()) {
             return new HashMap<>();
@@ -84,15 +84,13 @@ public class TaskService {
         return tasks.stream().filter(task -> task.getStatus().equals(TaskStatus.IN_WORK)).count();
     }
 
-    private long countFinishedTasksByDay(List<Task> tasks, Date date) {
+    long countFinishedTasksByDay(List<Task> tasks, Date date) {
         return tasks.stream().filter(
                 task -> task.getStatus().equals(TaskStatus.DONE) &&
                         task.getDoneAt().after(date) && task.getDoneAt().before(Date.from(Instant.now()))).count();
     }
 
-    private EmailSendingDto getEmailSendingDto(List<Task> tasks) {
-        long finishedTasks;
-        long unFinishedTasks;
+    EmailSendingDto getEmailSendingDto(List<Task> tasks) {
         StringBuilder title = new StringBuilder();
         StringBuilder unDoneSubtitle = new StringBuilder();
         StringBuilder doneSubtitle = new StringBuilder();
@@ -109,9 +107,10 @@ public class TaskService {
         today = Date.from(Instant.now());
         yesterday = Date.from(LocalDate.now().minusDays(1).atStartOfDay(ZoneId.systemDefault())
                 .toInstant());
+        long finishedTasks = countFinishedTasksByDay(tasks, yesterday);
+        long unFinishedTasks = countNotFinishedTasks(tasks);
 
-        if (countNotFinishedTasks(tasks) > 0) {
-            unFinishedTasks = countNotFinishedTasks(tasks);
+        if (unFinishedTasks > 0) {
             unDoneSubtitle.append("У вас осталось ").append(unFinishedTasks).append(" несделанных задач");
             title.append(unDoneSubtitle).append(".").append(System.lineSeparator());
             content.append("<h3>").append(unDoneSubtitle).append(":</h3><h5>");
@@ -122,8 +121,7 @@ public class TaskService {
             content.append("</h5><p></p>");
         }
 
-        if (countFinishedTasksByDay(tasks, yesterday) > 0) {
-            finishedTasks = countFinishedTasksByDay(tasks, yesterday);
+        if (finishedTasks > 0) {
             doneSubtitle.append("За сегодня вы выполнили ").append(finishedTasks).append(" задач");
             title.append(doneSubtitle).append(".").append(System.lineSeparator());
             content.append("<h3>").append(doneSubtitle).append(":</h3><h5>");
